@@ -1,20 +1,35 @@
-import { useHttp } from '../../hooks/http.hook';
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
+import { useHttp } from '../../hooks/http.hook';
 import { heroesFetching, heroesFetched, heroesFetchingError, heroDeleted } from '../../actions';
-import HeroesListItem from "../heroesListItem/HeroesListItem";
-import Spinner from '../spinner/Spinner';
+import { HeroesListItem } from "../heroesListItem/HeroesListItem";
+import { Spinner } from '../spinner/Spinner';
 
 // Задача для этого компонента:
 // При клике на "крестик" идет удаление персонажа из общего состояния
 // Усложненная задача:
 // Удаление идет и с json файла при помощи метода DELETE
 
-const HeroesList = () => {
-    const { filteredHerous, heroesLoadingStatus } = useSelector(state => state);
+export const HeroesList = () => {
+    const { heroesLoadingStatus } = useSelector(state => state);
     const dispatch = useDispatch();
     const { request } = useHttp();
+
+    const filteredHeroesSelector = createSelector(
+        (state) => state.filtersReducer.activeFilter,
+        (state) => state.heroesReducer.heroes,
+        (filter, heroes) => {
+            if (filter === 'all') {
+                return heroes;
+            } else {
+                return heroes.filter((item) => item.element === filter);
+            };
+        }
+    );
+
+    const filteredHeroes = useSelector(filteredHeroesSelector);
 
     useEffect(() => {
         dispatch(heroesFetching());
@@ -31,6 +46,8 @@ const HeroesList = () => {
                 .then(dispatch(heroDeleted(id)))
                 .catch((err) => console.log(err));
         },
+
+        // eslint-disable-next-line
         [request]
     );
 
@@ -50,12 +67,10 @@ const HeroesList = () => {
         })
     }
 
-    const elements = renderHeroesList(filteredHerous);
+    const elements = renderHeroesList(filteredHeroes);
     return (
         <ul>
             {elements}
         </ul>
     )
-}
-
-export default HeroesList;
+};

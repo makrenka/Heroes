@@ -1,5 +1,4 @@
-
-const HeroesListItem = ({ name, description, element, onDelete }) => {
+export const HeroesListItem = ({ name, description, element, onDelete }) => {
 
     let elementClassName;
 
@@ -40,6 +39,4 @@ const HeroesListItem = ({ name, description, element, onDelete }) => {
             </span>
         </li>
     )
-}
-
-export default HeroesListItem;
+};

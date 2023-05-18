@@ -3,17 +3,17 @@
 // Фильтры должны отображать только нужных героев при выборе
 // Активный фильтр имеет класс active
 
-import classNames from 'classnames';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import classNames from 'classnames';
+
 import { activeFilterChanged, filtersFetched, filtersFetching, filtersFetchingError } from '../../actions';
-
 import { useHttp } from "../../hooks/http.hook";
-import Spinner from '../spinner/Spinner';
+import { Spinner } from '../spinner/Spinner';
 
-const HeroesFilters = () => {
+export const HeroesFilters = () => {
 
-  const { filters, filtersLoadingStatus, activeFilter } = useSelector((state) => state);
+  const { filters, filtersLoadingStatus, activeFilter } = useSelector((state) => state.filtersReducer);
   const dispatch = useDispatch();
   const { request } = useHttp();
 
@@ -66,5 +66,3 @@ const HeroesFilters = () => {
     </div>
   );
 };
-
-export default HeroesFilters;

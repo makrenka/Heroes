@@ -10,17 +10,17 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { v4 as uuidv4 } from 'uuid';
-import { heroCreated } from "../../actions";
 
+import { heroCreated } from "../../actions";
 import { useHttp } from "../../hooks/http.hook";
 
-const HeroesAddForm = () => {
+export const HeroesAddForm = () => {
 
   const [heroName, setHeroName] = useState('');
   const [heroDescr, setHeroDescr] = useState('');
   const [heroElement, setHeroElement] = useState('');
 
-  const { filters, filtersLoadingStatus } = useSelector((state) => state);
+  const { filters, filtersLoadingStatus } = useSelector((state) => state.filtersReducer);
   const dispatch = useDispatch();
   const { request } = useHttp();
 
@@ -117,5 +117,3 @@ const HeroesAddForm = () => {
     </form>
   );
 };
-
-export default HeroesAddForm;
