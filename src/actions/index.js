@@ -24,6 +24,32 @@ export const activeFilterChanged = (filter) => {
     };
 };
 
+export const filtersFetching = () => {
+    return {
+        type: 'FILTERS_FETCHING',
+    };
+};
+
+export const filtersFetched = (data) => {
+    return {
+        type: 'FILTERS_FETCHED',
+        payload: data,
+    };
+};
+
+export const filtersFetchingError = () => {
+    return {
+        type: 'FILTERS_FETCHING_ERROR',
+    };
+};
+
+export const heroCreated = (hero) => {
+    return {
+        type: 'HERO_CREATED',
+        payload: hero,
+    };
+};
+
 export const heroDeleted = (id) => {
     return {
         type: 'HERO_DELETED',
