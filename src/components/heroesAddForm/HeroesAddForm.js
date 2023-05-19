@@ -8,11 +8,10 @@
 // Элементы <option></option> сформировать на базе данных из фильтров (без Все)
 
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from 'uuid';
 
-import { heroCreated } from "../../actions";
-import { useHttp } from "../../hooks/http.hook";
+import { useHeroesService } from "../../services/HeroesService";
 
 export const HeroesAddForm = () => {
 
@@ -21,8 +20,7 @@ export const HeroesAddForm = () => {
   const [heroElement, setHeroElement] = useState('');
 
   const { filters, filtersLoadingStatus } = useSelector((state) => state.filtersReducer);
-  const dispatch = useDispatch();
-  const { request } = useHttp();
+  const { createHero } = useHeroesService();
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -33,9 +31,7 @@ export const HeroesAddForm = () => {
       element: heroElement,
     };
 
-    request('http://localhost:3001/heroes', 'POST', JSON.stringify(newHero))
-      .then(dispatch(heroCreated(newHero)))
-      .catch((err) => console.log(err));
+    createHero(newHero);
 
     setHeroName('');
     setHeroDescr('');

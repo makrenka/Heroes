@@ -1,11 +1,11 @@
 import { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { useHttp } from '../../hooks/http.hook';
-import { heroesFetching, heroesFetched, heroesFetchingError, heroDeleted } from '../../actions';
 import { HeroesListItem } from "../heroesListItem/HeroesListItem";
 import { Spinner } from '../spinner/Spinner';
+import { useHeroesService } from '../../services/HeroesService';
 
 // Задача для этого компонента:
 // При клике на "крестик" идет удаление персонажа из общего состояния
@@ -14,8 +14,8 @@ import { Spinner } from '../spinner/Spinner';
 
 export const HeroesList = () => {
     const { heroesLoadingStatus } = useSelector(state => state);
-    const dispatch = useDispatch();
     const { request } = useHttp();
+    const { getHeroes, deleteHero } = useHeroesService();
 
     const filteredHeroesSelector = createSelector(
         (state) => state.filtersReducer.activeFilter,
@@ -32,21 +32,12 @@ export const HeroesList = () => {
     const filteredHeroes = useSelector(filteredHeroesSelector);
 
     useEffect(() => {
-        dispatch(heroesFetching());
-        request("http://localhost:3001/heroes")
-            .then(data => dispatch(heroesFetched(data)))
-            .catch(() => dispatch(heroesFetchingError()))
-
+        getHeroes();
         // eslint-disable-next-line
     }, []);
 
     const onDelete = useCallback(
-        (id) => {
-            request(`http://localhost:3001/heroes/${id}`, 'DELETE')
-                .then(dispatch(heroDeleted(id)))
-                .catch((err) => console.log(err));
-        },
-
+        (id) => { deleteHero(id) },
         // eslint-disable-next-line
         [request]
     );
