@@ -8,10 +8,11 @@
 // Элементы <option></option> сформировать на базе данных из фильтров (без Все)
 
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from 'uuid';
 
-import { useHeroesService } from "../../services/HeroesService";
+import { createHero } from "../../actions/heroes";
+import { useHttp } from "../../hooks/http.hook";
 
 export const HeroesAddForm = () => {
 
@@ -20,7 +21,8 @@ export const HeroesAddForm = () => {
   const [heroElement, setHeroElement] = useState('');
 
   const { filters, filtersLoadingStatus } = useSelector((state) => state.filtersReducer);
-  const { createHero } = useHeroesService();
+  const dispatch = useDispatch();
+  const { request } = useHttp();
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export const HeroesAddForm = () => {
       element: heroElement,
     };
 
-    createHero(newHero);
+    dispatch(createHero(request, newHero));
 
     setHeroName('');
     setHeroDescr('');
@@ -47,6 +49,7 @@ export const HeroesAddForm = () => {
 
     if (filters.length) {
       return filters.map(({ name, label }) => {
+        // eslint-disable-next-line
         if (name === 'all') return;
         return (
           <option key={name} value={name}>
