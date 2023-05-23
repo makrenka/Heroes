@@ -9,10 +9,10 @@
 
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { v4 as uuidv4 } from 'uuid';
 
 import { createHero } from "../../actions/heroes";
 import { useHttp } from "../../hooks/http.hook";
+import { filtersSelector } from "../../selectors";
 
 export const HeroesAddForm = () => {
 
@@ -20,20 +20,14 @@ export const HeroesAddForm = () => {
   const [heroDescr, setHeroDescr] = useState('');
   const [heroElement, setHeroElement] = useState('');
 
-  const { filters, filtersLoadingStatus } = useSelector((state) => state.filtersReducer);
+  const { filters, filtersLoadingStatus } = useSelector(filtersSelector);
   const dispatch = useDispatch();
   const { request } = useHttp();
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    const newHero = {
-      id: uuidv4(),
-      name: heroName,
-      description: heroDescr,
-      element: heroElement,
-    };
 
-    dispatch(createHero(request, newHero));
+    dispatch(createHero(request, heroName, heroDescr, heroElement));
 
     setHeroName('');
     setHeroDescr('');

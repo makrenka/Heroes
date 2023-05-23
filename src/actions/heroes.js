@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const getHeroes = (request) => (dispatch) => {
     dispatch(heroesFetching());
     request("http://localhost:3001/heroes")
@@ -11,7 +13,13 @@ export const deleteHero = (request, id) => (dispatch) => {
         .catch((err) => console.log(err));
 };
 
-export const createHero = (request, newHero) => (dispatch) => {
+export const createHero = (request, heroName, heroDescr, heroElement) => (dispatch) => {
+    const newHero = {
+        id: uuidv4(),
+        name: heroName,
+        description: heroDescr,
+        element: heroElement,
+    };
     request('http://localhost:3001/heroes', 'POST', JSON.stringify(newHero))
         .then(dispatch(heroCreated(newHero)))
         .catch((err) => console.log(err));

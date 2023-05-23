@@ -10,10 +10,11 @@ import classNames from 'classnames';
 import { activeFilterChanged, getFilters } from '../../actions/filters';
 import { Spinner } from '../spinner/Spinner';
 import { useHttp } from '../../hooks/http.hook';
+import { filtersSelector } from '../../selectors';
 
 export const HeroesFilters = () => {
 
-  const { filters, filtersLoadingStatus, activeFilter } = useSelector((state) => state.filtersReducer);
+  const { filters, filtersLoadingStatus, activeFilter } = useSelector(filtersSelector);
   const dispatch = useDispatch();
   const { request } = useHttp();
 
