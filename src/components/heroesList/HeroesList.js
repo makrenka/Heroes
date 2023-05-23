@@ -1,32 +1,49 @@
-import {useHttp} from '../../hooks/http.hook';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { createSelector } from 'reselect';
 
-import { heroesFetching, heroesFetched, heroesFetchingError } from '../../actions';
-import HeroesListItem from "../heroesListItem/HeroesListItem";
-import Spinner from '../spinner/Spinner';
+import { useHttp } from '../../hooks/http.hook';
+import { HeroesListItem } from "../heroesListItem/HeroesListItem";
+import { Spinner } from '../spinner/Spinner';
+import { useHeroesService } from '../../services/HeroesService';
 
 // Задача для этого компонента:
 // При клике на "крестик" идет удаление персонажа из общего состояния
 // Усложненная задача:
 // Удаление идет и с json файла при помощи метода DELETE
 
-const HeroesList = () => {
-    const {heroes, heroesLoadingStatus} = useSelector(state => state);
-    const dispatch = useDispatch();
-    const {request} = useHttp();
+export const HeroesList = () => {
+    const { heroesLoadingStatus } = useSelector(state => state);
+    const { request } = useHttp();
+    const { getHeroes, deleteHero } = useHeroesService();
+
+    const filteredHeroesSelector = createSelector(
+        (state) => state.filtersReducer.activeFilter,
+        (state) => state.heroesReducer.heroes,
+        (filter, heroes) => {
+            if (filter === 'all') {
+                return heroes;
+            } else {
+                return heroes.filter((item) => item.element === filter);
+            };
+        }
+    );
+
+    const filteredHeroes = useSelector(filteredHeroesSelector);
 
     useEffect(() => {
-        dispatch(heroesFetching());
-        request("http://localhost:3001/heroes")
-            .then(data => dispatch(heroesFetched(data)))
-            .catch(() => dispatch(heroesFetchingError()))
-
+        getHeroes();
         // eslint-disable-next-line
     }, []);
 
+    const onDelete = useCallback(
+        (id) => { deleteHero(id) },
+        // eslint-disable-next-line
+        [request]
+    );
+
     if (heroesLoadingStatus === "loading") {
-        return <Spinner/>;
+        return <Spinner />;
     } else if (heroesLoadingStatus === "error") {
         return <h5 className="text-center mt-5">Ошибка загрузки</h5>
     }
@@ -36,17 +53,15 @@ const HeroesList = () => {
             return <h5 className="text-center mt-5">Героев пока нет</h5>
         }
 
-        return arr.map(({id, ...props}) => {
-            return <HeroesListItem key={id} {...props}/>
+        return arr.map(({ id, ...props }) => {
+            return <HeroesListItem key={id} {...props} onDelete={() => onDelete(id)} />
         })
     }
 
-    const elements = renderHeroesList(heroes);
+    const elements = renderHeroesList(filteredHeroes);
     return (
         <ul>
             {elements}
         </ul>
     )
-}
-
-export default HeroesList;
+};
