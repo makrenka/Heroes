@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { createAction, nanoid } from "@reduxjs/toolkit";
 
 export const getHeroes = (request) => (dispatch) => {
     dispatch(heroesFetching());
@@ -15,7 +15,7 @@ export const deleteHero = (request, id) => (dispatch) => {
 
 export const createHero = (request, heroName, heroDescr, heroElement) => (dispatch) => {
     const newHero = {
-        id: uuidv4(),
+        id: nanoid(),
         name: heroName,
         description: heroDescr,
         element: heroElement,
@@ -25,25 +25,35 @@ export const createHero = (request, heroName, heroDescr, heroElement) => (dispat
         .catch((err) => console.log(err));
 };
 
-export const heroesFetching = () => ({
-    type: 'HEROES_FETCHING',
-});
+// export const heroesFetching = () => ({
+//     type: 'HEROES_FETCHING',
+// });
 
-export const heroesFetched = (heroes) => ({
-    type: 'HEROES_FETCHED',
-    payload: heroes,
-});
+export const heroesFetching = createAction('HEROES_FETCHING');
 
-export const heroesFetchingError = () => ({
-    type: 'HEROES_FETCHING_ERROR',
-});
+// export const heroesFetched = (heroes) => ({
+//     type: 'HEROES_FETCHED',
+//     payload: heroes,
+// });
 
-export const heroCreated = (hero) => ({
-    type: 'HERO_CREATED',
-    payload: hero,
-});
+export const heroesFetched = createAction('HEROES_FETCHED');
 
-export const heroDeleted = (id) => ({
-    type: 'HERO_DELETED',
-    payload: id,
-});
+// export const heroesFetchingError = () => ({
+//     type: 'HEROES_FETCHING_ERROR',
+// });
+
+export const heroesFetchingError = createAction('HEROES_FETCHING_ERROR');
+
+// export const heroCreated = (hero) => ({
+//     type: 'HERO_CREATED',
+//     payload: hero,
+// });
+
+export const heroCreated = createAction('HERO_CREATED');
+
+// export const heroDeleted = (id) => ({
+//     type: 'HERO_DELETED',
+//     payload: id,
+// });
+
+export const heroDeleted = createAction('HERO_DELETED');
