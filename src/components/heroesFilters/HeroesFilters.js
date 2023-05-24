@@ -7,20 +7,20 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import classNames from 'classnames';
 
-import { activeFilterChanged } from '../../actions';
+import { activeFilterChanged, getFilters } from '../../actions/filters';
 import { Spinner } from '../spinner/Spinner';
-import { useHeroesService } from '../../services/HeroesService';
+import { useHttp } from '../../hooks/http.hook';
+import { filtersSelector } from '../../selectors';
 
 export const HeroesFilters = () => {
 
-  const { filters, filtersLoadingStatus, activeFilter } = useSelector((state) => state.filtersReducer);
+  const { filters, filtersLoadingStatus, activeFilter } = useSelector(filtersSelector);
   const dispatch = useDispatch();
-  const { getFilters } = useHeroesService();
+  const { request } = useHttp();
 
   useEffect(() => {
-    getFilters();
-    // eslint-disable-next-line
-  }, []);
+    dispatch(getFilters(request));
+  }, [dispatch, request]);
 
   if (filtersLoadingStatus === "loading") {
     return <Spinner />

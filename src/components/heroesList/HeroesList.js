@@ -1,11 +1,11 @@
 import { useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { createSelector } from 'reselect';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { deleteHero, getHeroes } from '../../actions/heroes';
 import { useHttp } from '../../hooks/http.hook';
+import { filteredHeroesSelector, heroesSelector } from '../../selectors';
 import { HeroesListItem } from "../heroesListItem/HeroesListItem";
 import { Spinner } from '../spinner/Spinner';
-import { useHeroesService } from '../../services/HeroesService';
 
 // Задача для этого компонента:
 // При клике на "крестик" идет удаление персонажа из общего состояния
@@ -13,33 +13,18 @@ import { useHeroesService } from '../../services/HeroesService';
 // Удаление идет и с json файла при помощи метода DELETE
 
 export const HeroesList = () => {
-    const { heroesLoadingStatus } = useSelector(state => state);
+    const { heroesLoadingStatus } = useSelector(heroesSelector);
     const { request } = useHttp();
-    const { getHeroes, deleteHero } = useHeroesService();
-
-    const filteredHeroesSelector = createSelector(
-        (state) => state.filtersReducer.activeFilter,
-        (state) => state.heroesReducer.heroes,
-        (filter, heroes) => {
-            if (filter === 'all') {
-                return heroes;
-            } else {
-                return heroes.filter((item) => item.element === filter);
-            };
-        }
-    );
-
+    const dispatch = useDispatch();
     const filteredHeroes = useSelector(filteredHeroesSelector);
 
     useEffect(() => {
-        getHeroes();
-        // eslint-disable-next-line
-    }, []);
+        dispatch(getHeroes(request));
+    }, [dispatch, request]);
 
     const onDelete = useCallback(
-        (id) => { deleteHero(id) },
-        // eslint-disable-next-line
-        [request]
+        (id) => { dispatch(deleteHero(request, id)) },
+        [dispatch, request]
     );
 
     if (heroesLoadingStatus === "loading") {
