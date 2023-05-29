@@ -9,10 +9,10 @@
 
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { nanoid } from "@reduxjs/toolkit";
 
-import { createHero } from "../../actions/heroes";
-import { useHttp } from "../../hooks/http.hook";
 import { filtersSelector } from "../../selectors";
+import { createHero } from "../../store/heroesSlice";
 
 export const HeroesAddForm = () => {
 
@@ -22,12 +22,17 @@ export const HeroesAddForm = () => {
 
   const { filters, filtersLoadingStatus } = useSelector(filtersSelector);
   const dispatch = useDispatch();
-  const { request } = useHttp();
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
+    const newHero = {
+      id: nanoid(),
+      name: heroName,
+      description: heroDescr,
+      element: heroElement,
+    };
 
-    dispatch(createHero(request, heroName, heroDescr, heroElement));
+    dispatch(createHero(newHero));
 
     setHeroName('');
     setHeroDescr('');

@@ -1,12 +1,12 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 
-export const filtersSelector = (state) => state.filtersReducer;
+export const filtersSelector = (state) => state.filters;
 
-export const heroesSelector = (state) => state.heroesReducer;
+export const heroesSelector = (state) => state.heroes;
 
 export const filteredHeroesSelector = createSelector(
-    (state) => state.filtersReducer.activeFilter,
-    (state) => state.heroesReducer.heroes,
+    (state) => state.filters.activeFilter,
+    (state) => state.heroes.heroes,
     (filter, heroes) => {
         if (filter === 'all') {
             return heroes;

@@ -44,6 +44,9 @@ export const filtersReducer = createReducer(initialState, (builder) => {
             state.filtersLoadingStatus = 'idle';
             state.filters = action.payload;
         })
+        .addCase(filtersFetchingError, (state) => {
+            state.filtersLoadingStatus = 'error';
+        })
         .addCase(activeFilterChanged, (state, action) => {
             state.activeFilter = action.payload;
         })

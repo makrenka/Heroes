@@ -1,9 +1,8 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { deleteHero, getHeroes } from '../../actions/heroes';
-import { useHttp } from '../../hooks/http.hook';
 import { filteredHeroesSelector, heroesSelector } from '../../selectors';
+import { deleteHero, getHeroes } from '../../store/heroesSlice';
 import { HeroesListItem } from "../heroesListItem/HeroesListItem";
 import { Spinner } from '../spinner/Spinner';
 
@@ -14,18 +13,16 @@ import { Spinner } from '../spinner/Spinner';
 
 export const HeroesList = () => {
     const { heroesLoadingStatus } = useSelector(heroesSelector);
-    const { request } = useHttp();
     const dispatch = useDispatch();
     const filteredHeroes = useSelector(filteredHeroesSelector);
 
     useEffect(() => {
-        dispatch(getHeroes(request));
-    }, [dispatch, request]);
+        dispatch(getHeroes());
+    }, [dispatch]);
 
-    const onDelete = useCallback(
-        (id) => { dispatch(deleteHero(request, id)) },
-        [dispatch, request]
-    );
+    const onDelete = (id) => {
+        dispatch(deleteHero(id));
+    };
 
     if (heroesLoadingStatus === "loading") {
         return <Spinner />;
