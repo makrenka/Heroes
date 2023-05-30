@@ -1,14 +1,19 @@
-import { legacy_createStore as createStore, combineReducers, compose, applyMiddleware } from 'redux';
-import ReduxThunk from 'redux-thunk';
-import { filtersReducer } from '../reducers/filters';
-import { heroesReducer } from '../reducers/heroes';
+import { configureStore } from '@reduxjs/toolkit';
 
-const store = createStore(
-  combineReducers({ heroesReducer, filtersReducer }),
-  compose(
-    applyMiddleware(ReduxThunk),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  )
-);
+import filters from './filtersSlice';
+import heroes from './heroesSlice';
 
-export default store;
+// const store = createStore(
+//   combineReducers({ heroesReducer, filtersReducer }),
+//   compose(
+//     applyMiddleware(ReduxThunk),
+//     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+//   )
+// );
+
+// export default store;
+
+export const store = configureStore({
+  reducer: { heroes, filters },
+  devTools: process.env.NODE_ENV !== 'production',
+});
