@@ -11,8 +11,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 
-import { filtersSelector } from "../../selectors";
 import { createHero } from "../../store/heroesSlice";
+import { allFiltersSelector, heroesSelector } from "../../selectors/index";
 
 export const HeroesAddForm = () => {
 
@@ -20,8 +20,9 @@ export const HeroesAddForm = () => {
   const [heroDescr, setHeroDescr] = useState('');
   const [heroElement, setHeroElement] = useState('');
 
-  const { filters, filtersLoadingStatus } = useSelector(filtersSelector);
+  const { filters, filtersLoadingStatus } = useSelector(heroesSelector);
   const dispatch = useDispatch();
+  const allFilters = useSelector(allFiltersSelector);
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -105,7 +106,7 @@ export const HeroesAddForm = () => {
           onChange={(e) => setHeroElement(e.target.value)}
         >
           <option>Я владею элементом...</option>
-          {renderFilters(filters, filtersLoadingStatus)}
+          {renderFilters(allFilters, filtersLoadingStatus)}
         </select>
       </div>
 

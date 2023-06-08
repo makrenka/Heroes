@@ -8,13 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import classNames from 'classnames';
 
 import { Spinner } from '../spinner/Spinner';
-import { filtersSelector } from '../../selectors';
+import { allFiltersSelector, filtersSelector } from '../../selectors';
 import { activeFilterChanged, getFilters } from '../../store/filtersSlice';
 
 export const HeroesFilters = () => {
 
-  const { filters, filtersLoadingStatus, activeFilter } = useSelector(filtersSelector);
+  const { filtersLoadingStatus, activeFilter } = useSelector(filtersSelector);
   const dispatch = useDispatch();
+  const allFilters = useSelector(allFiltersSelector);
 
   useEffect(() => {
     dispatch(getFilters());
@@ -49,7 +50,7 @@ export const HeroesFilters = () => {
     });
   };
 
-  const elements = renderFilters(filters);
+  const elements = renderFilters(allFilters);
 
   return (
     <div className="card shadow-lg mt-4">
