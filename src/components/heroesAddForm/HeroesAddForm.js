@@ -8,21 +8,22 @@
 // Элементы <option></option> сформировать на базе данных из фильтров (без Все)
 
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 
-import { createHero } from "../../store/heroesSlice";
-import { allFiltersSelector, heroesSelector } from "../../selectors/index";
+import { useCreateHeroMutation, useGetFiltersQuery } from "../../api/heroesApiSlice";
 
 export const HeroesAddForm = () => {
+  const {
+    data: filters = [],
+    isLoading,
+    isError,
+  } = useGetFiltersQuery();
 
   const [heroName, setHeroName] = useState('');
   const [heroDescr, setHeroDescr] = useState('');
   const [heroElement, setHeroElement] = useState('');
 
-  const { filters, filtersLoadingStatus } = useSelector(heroesSelector);
-  const dispatch = useDispatch();
-  const allFilters = useSelector(allFiltersSelector);
+  const [createHero] = useCreateHeroMutation();
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -33,17 +34,17 @@ export const HeroesAddForm = () => {
       element: heroElement,
     };
 
-    dispatch(createHero(newHero));
+    createHero(newHero).unwrap();
 
     setHeroName('');
     setHeroDescr('');
     setHeroElement('');
   };
 
-  const renderFilters = (filters, status) => {
-    if (status === 'loading') {
+  const renderFilters = (filters) => {
+    if (isLoading) {
       return <option>Загрузка элементов</option>
-    } else if (status === 'error') {
+    } else if (isError) {
       return <option>Ошибка загрузки</option>
     };
 
@@ -106,7 +107,7 @@ export const HeroesAddForm = () => {
           onChange={(e) => setHeroElement(e.target.value)}
         >
           <option>Я владею элементом...</option>
-          {renderFilters(allFilters, filtersLoadingStatus)}
+          {renderFilters(filters)}
         </select>
       </div>
 

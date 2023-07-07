@@ -3,27 +3,26 @@
 // Фильтры должны отображать только нужных героев при выборе
 // Активный фильтр имеет класс active
 
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import classNames from 'classnames';
 
 import { Spinner } from '../spinner/Spinner';
-import { allFiltersSelector, filtersSelector } from '../../selectors';
-import { activeFilterChanged, getFilters } from '../../store/filtersSlice';
+import { activeFilterChanged } from '../../store/filtersSlice';
+import { useGetFiltersQuery } from '../../api/heroesApiSlice';
 
 export const HeroesFilters = () => {
+  const {
+    data: filters = [],
+    isLoading,
+    isError,
+  } = useGetFiltersQuery();
 
-  const { filtersLoadingStatus, activeFilter } = useSelector(filtersSelector);
+  const { activeFilter } = useSelector((state) => state.filters);
   const dispatch = useDispatch();
-  const allFilters = useSelector(allFiltersSelector);
 
-  useEffect(() => {
-    dispatch(getFilters());
-  }, [dispatch]);
-
-  if (filtersLoadingStatus === "loading") {
+  if (isLoading) {
     return <Spinner />
-  } else if (filtersLoadingStatus === 'error') {
+  } else if (isError) {
     return <h5 className='text-center mt-5'>Ошибка загрузки</h5>
   };
 
@@ -50,7 +49,7 @@ export const HeroesFilters = () => {
     });
   };
 
-  const elements = renderFilters(allFilters);
+  const elements = renderFilters(filters);
 
   return (
     <div className="card shadow-lg mt-4">

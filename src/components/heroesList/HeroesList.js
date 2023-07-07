@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { useDeleteHeroMutation, useGetHeroesQuery } from '../../api/heroesApiSlice';
 
-import { filteredHeroesSelector, heroesSelector } from '../../selectors';
-import { deleteHero, getHeroes } from '../../store/heroesSlice';
 import { HeroesListItem } from "../heroesListItem/HeroesListItem";
 import { Spinner } from '../spinner/Spinner';
 
@@ -12,21 +11,32 @@ import { Spinner } from '../spinner/Spinner';
 // Удаление идет и с json файла при помощи метода DELETE
 
 export const HeroesList = () => {
-    const { heroesLoadingStatus } = useSelector(heroesSelector);
-    const dispatch = useDispatch();
-    const filteredHeroes = useSelector(filteredHeroesSelector);
+    const {
+        data: heroes = [],
+        isLoading,
+        isError,
+    } = useGetHeroesQuery();
 
-    useEffect(() => {
-        dispatch(getHeroes());
-    }, [dispatch]);
+    const activeFilter = useSelector((state) => state.filters.activeFilter);
 
-    const onDelete = (id) => {
-        dispatch(deleteHero(id));
-    };
+    const filteredHeroes = useMemo(() => {
+        const filteredHeroes = heroes.slice();
+        if (activeFilter === 'all') {
+            return filteredHeroes;
+        } else {
+            return filteredHeroes.filter((item) => item.element === activeFilter);
+        };
+    }, [heroes, activeFilter]);
 
-    if (heroesLoadingStatus === "loading") {
+    const [deleteHero] = useDeleteHeroMutation();
+
+    const onDelete = useCallback((id) => {
+        deleteHero(id);
+    }, [])
+
+    if (isLoading) {
         return <Spinner />;
-    } else if (heroesLoadingStatus === "error") {
+    } else if (isError) {
         return <h5 className="text-center mt-5">Ошибка загрузки</h5>
     }
 
